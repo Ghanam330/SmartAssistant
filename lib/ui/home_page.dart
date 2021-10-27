@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_utils/src/extensions/context_extensions.dart';
+import 'package:intl/intl.dart';
 import 'package:smartassistant/services/notification_services.dart';
 import 'package:smartassistant/services/them_services.dart';
+
+import '../theme.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -20,7 +24,6 @@ class _HomePageState extends State<HomePage> {
     notifyHelper = NotifyHelper();
     notifyHelper.initializeNotification();
     notifyHelper.requestIOSPermissions();
-
   }
 
   @override
@@ -33,6 +36,8 @@ class _HomePageState extends State<HomePage> {
 
   AppBar _buildAppBar() {
     return AppBar(
+      elevation: 0,
+      backgroundColor: context.theme.backgroundColor,
       leading: GestureDetector(
         onTap: () {
           ThemeService().switchTheme();
@@ -41,16 +46,18 @@ class _HomePageState extends State<HomePage> {
               body: Get.isDarkMode
                   ? "Activated Light Theme"
                   : "Activated Dark Theme");
+
+          notifyHelper.scheduledNotification();
         },
-        child: const Icon(
-          Icons.nightlight_rounded,
+        child: Icon(
+          Get.isDarkMode ? Icons.wb_sunny_outlined : Icons.nightlight_rounded,
           size: 20,
+          color: Get.isDarkMode ? Colors.white : Colors.black,
         ),
       ),
       actions: const [
-        Icon(
-          Icons.person,
-          size: 20,
+        CircleAvatar(
+          backgroundImage: AssetImage("images/ahmed.jpg"),
         ),
         SizedBox(
           width: 20,
@@ -60,6 +67,29 @@ class _HomePageState extends State<HomePage> {
   }
 
   Column _buildBody() {
-    return Column();
+    return Column(
+      children: [
+        Row(
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    DateFormat.yMMMd().format(DateTime.now()),
+                    style: subHeadingStyle,
+                  ),
+                   Text(
+                    "Today",
+                    style: headingStyle
+                  ),
+                ],
+              ),
+            )
+          ],
+        )
+      ],
+    );
   }
 }
